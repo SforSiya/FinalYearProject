@@ -78,7 +78,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                         // Form is valid, proceed with the next action
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
+                          MaterialPageRoute(builder: (context) => VerificationScreen()),
                         );
                         print('Phone number: ${phoneController.text}');
                       }
