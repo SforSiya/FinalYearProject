@@ -1,103 +1,187 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
 import '../widgets/CustomElevatedButton.dart';
 import '../widgets/CustomTextFormField.dart';
 import 'ResetPassword_screen.dart';
-import 'Verification_screen.dart';
-import 'login_screen.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
+class ForgotPasswordScreen extends StatefulWidget {
+  @override
+  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String? verificationId;
+  bool isCodeSent = false;
+  bool isResending = false;
+  int _resendCooldown = 0;
+  Timer? _timer;
+
+  // Start the cooldown timer for resending the verification code
+  void _startResendCooldown() {
+    _resendCooldown = 60; // Cooldown for 60 seconds
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_resendCooldown > 0) {
+        setState(() {
+          _resendCooldown--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> _sendCode() async {
+    final phone = phoneController.text.trim();
+
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        isResending = true;
+      });
+
+      try {
+        await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: phone,
+          timeout: Duration(seconds: 60),
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            // Auto-retrieval
+            await FirebaseAuth.instance.signInWithCredential(credential);
+            Navigator.push(context, MaterialPageRoute(builder: (_) => ResetPasswordScreen()));
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            // Handle error
+            String errorMessage;
+            if (e.code == 'invalid-phone-number') {
+              errorMessage = 'The phone number entered is invalid.';
+            } else {
+              errorMessage = e.message ?? 'Verification failed. Please try again.';
+            }
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+          },
+          codeSent: (String verificationId, int? resendToken) {
+            setState(() {
+              this.verificationId = verificationId;
+              isCodeSent = true;
+              isResending = false;
+            });
+            _startResendCooldown();
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            this.verificationId = verificationId;
+          },
+        );
+      } catch (e) {
+        // Handle error
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      } finally {
+        setState(() {
+          isResending = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _verifyCode(String smsCode) async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationId!,
+        smsCode: smsCode,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.push(context, MaterialPageRoute(builder: (_) => ResetPasswordScreen()));
+    } catch (e) {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Forgot Password'),
-      ),
+      appBar: AppBar(title: Text('Forgot Password')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Enter your phone number to receive a verification code.',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                CustomTextFormField(
+                  controller: phoneController,
+                  obscureText: false,
+                  hintText: 'Phone Number',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    if (!RegExp(r'^\+[1-9]\d{1,14}$').hasMatch(value)) {
+                      return 'Please enter a valid phone number with country code';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                if (isCodeSent)
                   Text(
-                    'Enter your Contact Info',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    'A verification code has been sent to your phone number. Please enter it below.',
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 8),
+                SizedBox(height: 20),
+                CustomElevatedButton(
+                  text: isCodeSent ? 'Verify Code' : 'Send Code',
+                  onTap: () {
+                    if (isCodeSent) {
+                      // Code to verify SMS code
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Enter Verification Code'),
+                          content: TextField(
+                            keyboardType: TextInputType.number,
+                            maxLength: 6,
+                            onChanged: (value) {
+                              if (value.length == 6) {
+                                _verifyCode(value);
+                                Navigator.pop(context);
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      _sendCode();
+                    }
+                  },
+                ),
+                if (isCodeSent && _resendCooldown > 0)
                   Text(
-                    'Please enter your mobile number or e-mail to receive verification code.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+                    'You can resend the code in $_resendCooldown seconds.',
                     textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
                   ),
-                  SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Phone Number',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  CustomTextFormField(
-                    controller: phoneController,
-                    labelText: 'Phone Number',
-                    obscureText: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty ||value == 11) {
-                        return 'Please enter your phone number';
-                      }
-                      // Simple phone number validation
-                      if (!RegExp(r'^\+?[0-9]{7,15}$').hasMatch(value)) {
-                        return 'Please enter a valid phone number';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
+                if (isCodeSent && _resendCooldown == 0)
                   CustomElevatedButton(
-                    text: 'Send',
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() == true) {
-                        // Form is valid, proceed with the next action
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => VerificationScreen()),
-                        );
-                        print('Phone number: ${phoneController.text}');
-                      }
-                    },
+                    text: 'Resend Code',
+                    onTap: _sendCode,
                   ),
-                  SizedBox(height: 10),
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginScreen()),
-                        );
-                      },
-                      child: Text("Back to Login"),
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
           ),
         ),

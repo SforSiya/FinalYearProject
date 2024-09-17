@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "751796429426",
+    "project_id": "mathmind-e5870",
+    "storage_bucket": "mathmind-e5870.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751796429426:android:2a6af2cb208570a7ac58eb",
+        "android_client_info": {
+          "package_name": "com.example.mathmind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ16rNI2b5dmEzlFdoMMUN6P79xiCUr-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

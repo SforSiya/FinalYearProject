@@ -2,34 +2,38 @@ import 'package:flutter/material.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final void Function()? onTap;
 
-  CustomElevatedButton({
+  const CustomElevatedButton({
+    super.key,
     required this.text,
-    required this.onPressed,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue, // Set the background color
-          foregroundColor: Colors.white, // Set the text color
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(7), // Rounded corners
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(25),
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
-          padding: EdgeInsets.symmetric(vertical: 15), // Button padding
         ),
-        child: Text(
-          text,
-          style: TextStyle(fontSize: 16), // Text style (font size, weight, etc.)
-        ),
-      ),
+
+      )
+
     );
   }
 }
+
+

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import 'signup_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -23,34 +22,34 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white, // Background color
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 150,
-              ),
-              // Centered logo
-              Image.asset(
-                'assets/logo_1.png', // Path to your logo image
-                height: 150, // Adjust the height as needed
-
-              ),
-              SizedBox(height: 20), // Space before the text
-              Text(
-                'Welcome to MathMind',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue, // Text color
-                ),
-              ),
-              // Space between buttons and bottom of the screen
-            ],
+      body: Stack(
+        children: [
+          // Background GIF
+          Positioned.fill(
+            child: Image.asset(
+              'assets/splash_screen.gif', // Replace with your actual GIF path
+              fit: BoxFit.cover, // Make sure the GIF covers the entire screen
+            ),
           ),
-        ),
+          // Overlayed content (centered text)
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // "MathMind" text
+                Text(
+                  'MathMind',
+                  style: TextStyle(
+                    fontSize: 40, // Font size for the title
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // White text
+                    // Replace with your chosen cute font
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

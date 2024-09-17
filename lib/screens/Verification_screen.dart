@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import '../helper/Phone_Auth.dart';
 import '../widgets/CustomElevatedButton.dart';
 import 'ResetPassword_screen.dart';
 
@@ -10,17 +10,21 @@ class VerificationScreen extends StatefulWidget {
 }
 
 class _VerificationScreenState extends State<VerificationScreen> {
+  final PhoneAuthService _phoneAuthService = PhoneAuthService();
+
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
   final TextEditingController _controller4 = TextEditingController();
 
   void _submitVerificationCode() {
-    if (_controller1.text.isEmpty ||
-        _controller2.text.isEmpty ||
-        _controller3.text.isEmpty ||
-        _controller4.text.isEmpty) {
-      // Show an alert dialog if any field is empty
+    String code = _controller1.text +
+        _controller2.text +
+        _controller3.text +
+        _controller4.text;
+
+    if (code.length != 4) {
+      // Show an alert dialog if the code is incomplete
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -35,13 +39,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
         ),
       );
     } else {
-      // Navigate to the ResetPasswordScreen if all fields are filled
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
-      );
-      print('Verification code submitted');
-      // Add verification code submission logic here
+      // Use the combined code to verify
+      _phoneAuthService.verifyCode(context, code);
     }
   }
 
@@ -74,10 +73,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildCodeInput(context, _controller1),
-                _buildCodeInput(context, _controller2),
-                _buildCodeInput(context, _controller3),
-                _buildCodeInput(context, _controller4),
+                _buildCodeInput(_controller1),
+                _buildCodeInput(_controller2),
+                _buildCodeInput(_controller3),
+                _buildCodeInput(_controller4),
               ],
             ),
             SizedBox(height: 20),
@@ -98,7 +97,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             SizedBox(height: 30),
             CustomElevatedButton(
               text: 'Send',
-              onPressed: _submitVerificationCode,
+              onTap: _submitVerificationCode,
             ),
           ],
         ),
@@ -106,7 +105,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     );
   }
 
-  Widget _buildCodeInput(BuildContext context, TextEditingController controller) {
+  Widget _buildCodeInput(TextEditingController controller) {
     return SizedBox(
       width: 60,
       child: TextField(

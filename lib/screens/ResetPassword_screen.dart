@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../widgets/CustomElevatedButton.dart';
 import '../widgets/CustomTextFormField.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'ResetPasswordDone_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -14,128 +18,73 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  bool _passwordsMatch = false;
 
-  void _checkPasswordsMatch() {
-    setState(() {
-      _passwordsMatch =
-          _newPasswordController.text == _confirmPasswordController.text;
-    });
+  void _resetPassword() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      try {
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await user.updatePassword(_newPasswordController.text.trim());
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PasswordUpdatedScreen()));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No user is signed in currently.')));
+        }
+      } catch (e) {
+        // Handle error
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double containerWidth = screenWidth * 0.8;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Reset Password'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: AppBar(title: Text('Reset Password')),
       body: Center(
-        child: Container(
-          width: containerWidth,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'At least 9 characters with uppercase and lowercase letters.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Enter new Password',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8),
-                CustomTextFormField(
-                  controller: _newPasswordController,
-                  labelText: 'Enter new password',
-                  obscureText: true,
-                  isPasswordVisible: _isPasswordVisible,
-                  onVisibilityToggle: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 9) {
-                      return 'Password must be at least 9 characters long';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Confirm Password',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8),
-                CustomTextFormField(
-                  controller: _confirmPasswordController,
-                  labelText: 'Confirm Password',
-                  obscureText: true,
-                  isPasswordVisible: _isConfirmPasswordVisible,
-                  onVisibilityToggle: () {
-                    setState(() {
-                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != _newPasswordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                CustomElevatedButton(
-                  text: 'Continue',
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() == true) {
-                      // Form is valid, proceed with the action
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => PasswordUpdatedScreen()),
-                      );
-
-                      print('Continue button pressed');
-                    }
-                  },
-                ),
-              ],
-            ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              CustomTextFormField(
+                controller: _newPasswordController,
+                hintText: 'New Password',
+                obscureText: !_isPasswordVisible,
+                onVisibilityToggle: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a new password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                  }
+                  return null;
+                },
+              ),
+              CustomTextFormField(
+                controller: _confirmPasswordController,
+                hintText: 'Confirm Password',
+                obscureText: !_isConfirmPasswordVisible,
+                onVisibilityToggle: () {
+                  setState(() {
+                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                  });
+                },
+                validator: (value) {
+                  if (value != _newPasswordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              CustomElevatedButton(
+                text: 'Reset Password',
+                onTap: _resetPassword,
+              ),
+            ],
           ),
         ),
       ),

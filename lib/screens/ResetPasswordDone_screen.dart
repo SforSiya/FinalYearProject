@@ -51,7 +51,7 @@ class PasswordUpdatedScreen extends StatelessWidget {
           width: containerWidth,
           child: CustomElevatedButton(
             text: 'Sign In',
-            onPressed: () {
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),

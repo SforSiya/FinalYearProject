@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import '../helper/auth_service.dart';
 import '../widgets/CustomElevatedButton.dart';
 import '../widgets/CustomTextFormField.dart';
-import 'login_screen.dart';
 
-class RegistrationScreen extends StatefulWidget {
+import 'login_screen.dart';
+import '../patient/patient_home.dart';
+
+class PatientRegistrationScreen extends StatefulWidget {
+  final String parentEmail;
+
+  PatientRegistrationScreen({required this.parentEmail});
+
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  _PatientRegistrationScreenState createState() => _PatientRegistrationScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _parentEmailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -18,11 +26,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  void _registerPatient() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final authService = AuthService();
+      final user = await authService.signUpPatient(
+        _usernameController.text,
+        _emailController.text,
+        _passwordController.text,
+        widget.parentEmail,
+      );
+
+      if (user != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      } else {
+        // Handle the error (e.g., show a Snackbar or dialog)
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registration'),
+        title: Text('Patient Registration'),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -36,7 +65,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 children: [
                   CustomTextFormField(
                     controller: _usernameController,
-                    labelText: 'Username',
+                    hintText: 'Username',
+                    obscureText: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a username';
@@ -47,7 +77,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _emailController,
-                    labelText: 'Email',
+                    hintText: 'Email',
+                    obscureText: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an email';
@@ -60,21 +91,42 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomTextFormField(
+                    controller: _parentEmailController,
+                    hintText: 'Parent Email',
+                    obscureText: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the parent\'s email';
+                      }
+                      if (value != widget.parentEmail) {
+                        return 'Parent email does not match';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  CustomTextFormField(
                     controller: _passwordController,
-                    labelText: 'Password',
-                    obscureText: true,
+                    hintText: 'Password',
+                    obscureText: !_obscurePassword,
                     isPasswordVisible: !_obscurePassword,
                     onVisibilityToggle: () {
                       setState(() {
                         _obscurePassword = !_obscurePassword;
                       });
                     },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _confirmPasswordController,
-                    labelText: 'Confirm Password',
-                    obscureText: true,
+                    hintText: 'Confirm Password',
+                    obscureText: !_obscureConfirmPassword,
                     isPasswordVisible: !_obscureConfirmPassword,
                     onVisibilityToggle: () {
                       setState(() {
@@ -93,24 +145,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                   SizedBox(height: 20),
                   CustomElevatedButton(
-                    text: 'SIGN UP',
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        // Add registration logic here
-                      }
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  Text('or', textAlign: TextAlign.center),
-                  SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
-                    },
-                    child: Text("Already have an account? Login"),
+                    onTap: _registerPatient,
+                    text: 'Register',
                   ),
                 ],
               ),
@@ -121,3 +157,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 }
+
+
+
