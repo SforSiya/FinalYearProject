@@ -1,11 +1,8 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:mathmind/patient/Kids_screens/games/shape_game/main_shape_file.dart';
-import 'package:mathmind/patient/Kids_screens/games/shape_game/screens_ShapeGame/result_shape_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mathmind/patient/Kids_screens/games/shape_game/screens_ShapeGame/result_shape_screen.dart';
 
 class ShapeScreen extends StatefulWidget {
   @override
@@ -13,23 +10,64 @@ class ShapeScreen extends StatefulWidget {
 }
 
 class _ShapeScreenState extends State<ShapeScreen> {
-  final List<String> shapes = ["Rectangle", "Circle", "Square", "Triangle", "Pentagon", "Quadrilateral", "Star", "Hexagon"];
+  List<String> shapes = ['Circle', 'Square', 'Triangle']; // Sample shapes
   Random random = Random();
   int currentShapeIndex = 0;
-  int questionCount = 0;
-  int correctAnswers = 0;
   List<String> options = [];
+  int correctAnswers = 0;
+  int questionCount = 0;
+  int totalQuestions = 5;
+  String? userId;
 
   @override
   void initState() {
     super.initState();
     _generateNewShape();
+    _getCurrentUserId();
   }
 
+  // Firebase score-saving method
+  Future<void> _saveScoreToFirebase(int score) async {
+    if (userId != null) {
+      CollectionReference progressRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('progress');
+      DocumentReference scoreDocRef = progressRef.doc('shape_game');
 
-  void _generateNewShape() {
-    setState(() {
-      if (questionCount < shapes.length) {
+      DocumentSnapshot snapshot = await scoreDocRef.get();
+
+      if (snapshot.exists) {
+        int highestScore = snapshot['highestScore'] ?? 0;
+        if (score > highestScore) {
+          await scoreDocRef.set({
+            'highestScore': score,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        }
+      } else {
+        await scoreDocRef.set({
+          'highestScore': score,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      }
+    }
+  }
+
+  // Fetch current user ID
+  Future<void> _getCurrentUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+    }
+  }
+
+  // Generate a new shape and options for the game
+  void _generateNewShape() async {
+    if (questionCount < totalQuestions) {
+      setState(() {
         currentShapeIndex = random.nextInt(shapes.length);
         options = [shapes[currentShapeIndex]];
 
@@ -41,60 +79,60 @@ class _ShapeScreenState extends State<ShapeScreen> {
         }
         options.shuffle();
         questionCount++;
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => ResultScreenShape(score: correctAnswers,totalQuestions: shapes.length,)),
-        );
-      }
-    });
+      });
+    } else {
+      // Save the score when the game ends
+      await _saveScoreToFirebase(correctAnswers);
+
+      // Navigate to the result screen, passing userId
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResultScreenShape(
+            score: correctAnswers,
+            totalQuestions: totalQuestions,
+            userId: userId!, // Passing the userId
+          ),
+        ),
+      );
+    }
   }
 
-  void _checkAnswer(String selectedShape) {
-    bool isCorrect = selectedShape == shapes[currentShapeIndex];
-    if (isCorrect) {
-      correctAnswers++;
+  // Handling answer selection
+  void _handleAnswer(String selectedShape) {
+    if (selectedShape == shapes[currentShapeIndex]) {
+      setState(() {
+        correctAnswers++;
+      });
     }
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: isCorrect ? Colors.green[50] : Colors.red[50],
-        title: Text(isCorrect ? "Well Done!" : "Incorrect!"),
-        actions: [
-          TextButton(
-            child: Text("Next"),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _generateNewShape();
-            },
-          ),
-        ],
-      ),
-    );
+    _generateNewShape();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Shape Game'), backgroundColor: Color(0xFF88AB8E)),
+      appBar: AppBar(title: Text('Shape Game')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Guess the Shape!", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold,color: Colors.purple)),
-          SizedBox(height: 40),
-          Center(child: Icon(Icons.star, size: 100, color: Colors.pink)), // Replace with your shape widget
-          SizedBox(height: 30),
-          ...options.map((option) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFAFC8AD),
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              ),
-              onPressed: () => _checkAnswer(option),
-              child: Text(option, style: TextStyle(fontSize: 22)),
-            ),
-          )),
+          Text(
+            'Identify the Shape',
+            style: TextStyle(fontSize: 24),
+          ),
+          SizedBox(height: 20),
+          Text(
+            shapes[currentShapeIndex],
+            style: TextStyle(fontSize: 48),
+          ),
+          SizedBox(height: 20),
+          Column(
+            children: options.map((option) {
+              return ElevatedButton(
+                onPressed: () => _handleAnswer(option),
+                child: Text(option),
+              );
+            }).toList(),
+          ),
         ],
       ),
     );

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mathmind/patient/Kids_screens/games/shape_game/screens_ShapeGame/result_shape_screen.dart';
 
-// The ShapeScreen StatefulWidget
 class ShapeScreen extends StatefulWidget {
   @override
   _ShapeScreenState createState() => _ShapeScreenState();
@@ -33,13 +32,26 @@ class _ShapeScreenState extends State<ShapeScreen> {
   int questionCount = 0;
   int correctAnswers = 0;
   List<String> options = [];
+  String? userId; // Store user ID here
 
   @override
   void initState() {
     super.initState();
+    _getCurrentUserId(); // Fetch user ID on initialization
     _generateNewShape();
   }
 
+  // Fetch the current user's ID
+  Future<void> _getCurrentUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+    }
+  }
+
+  // Generate a new shape
   void _generateNewShape() {
     setState(() {
       if (questionCount < shapes.length) {
@@ -55,17 +67,22 @@ class _ShapeScreenState extends State<ShapeScreen> {
         options.shuffle();
         questionCount++;
       } else {
-        // If all questions have been answered, show the result screen
+        // Navigate to ResultScreenShape with userId
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => ResultScreenShape(score: correctAnswers, totalQuestions: shapes.length),
+            builder: (_) => ResultScreenShape(
+              score: correctAnswers,
+              totalQuestions: shapes.length,
+              userId: userId!, // Pass userId here
+            ),
           ),
         );
       }
     });
   }
 
+  // Check the answer and show a dialog
   void _checkAnswer(String selectedShape) {
     bool isCorrect = selectedShape == shapes[currentShapeIndex];
     if (isCorrect) {
@@ -78,7 +95,10 @@ class _ShapeScreenState extends State<ShapeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isCorrect ? Colors.green[50] : Colors.red[50],
-        title: Text(title, style: TextStyle(color: isCorrect ? Colors.green : Colors.red)),
+        title: Text(
+          title,
+          style: TextStyle(color: isCorrect ? Colors.green : Colors.red),
+        ),
         actions: [
           TextButton(
             child: Text(buttonText, style: TextStyle(fontSize: 18)),
@@ -264,4 +284,3 @@ class QuadrilateralPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
-
