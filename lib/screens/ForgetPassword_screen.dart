@@ -7,6 +7,8 @@ import '../widgets/CustomTextFormField.dart';
 import 'ResetPassword_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
+
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
@@ -25,7 +27,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void _startResendCooldown() {
     _resendCooldown = 60; // Cooldown for 60 seconds
     _timer?.cancel();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_resendCooldown > 0) {
         setState(() {
           _resendCooldown--;
@@ -47,11 +49,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       try {
         await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: phone,
-          timeout: Duration(seconds: 60),
+          timeout: const Duration(seconds: 60),
           verificationCompleted: (PhoneAuthCredential credential) async {
             // Auto-retrieval
             await FirebaseAuth.instance.signInWithCredential(credential);
-            Navigator.push(context, MaterialPageRoute(builder: (_) => ResetPasswordScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const ResetPasswordScreen()));
           },
           verificationFailed: (FirebaseAuthException e) {
             // Handle error
@@ -59,9 +62,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             if (e.code == 'invalid-phone-number') {
               errorMessage = 'The phone number entered is invalid.';
             } else {
-              errorMessage = e.message ?? 'Verification failed. Please try again.';
+              errorMessage =
+                  e.message ?? 'Verification failed. Please try again.';
             }
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(errorMessage)));
           },
           codeSent: (String verificationId, int? resendToken) {
             setState(() {
@@ -77,7 +82,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         );
       } catch (e) {
         // Handle error
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       } finally {
         setState(() {
           isResending = false;
@@ -93,10 +99,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         smsCode: smsCode,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.push(context, MaterialPageRoute(builder: (_) => ResetPasswordScreen()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (_) => const ResetPasswordScreen()));
     } catch (e) {
       // Handle error
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
     }
   }
 
@@ -109,7 +117,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Forgot Password')),
+      appBar: AppBar(title: const Text('Forgot Password')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
@@ -118,11 +126,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                const Text(
                   'Enter your phone number to receive a verification code.',
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: phoneController,
                   obscureText: false,
@@ -137,13 +145,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 if (isCodeSent)
-                  Text(
+                  const Text(
                     'A verification code has been sent to your phone number. Please enter it below.',
                     textAlign: TextAlign.center,
                   ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 CustomElevatedButton(
                   text: isCodeSent ? 'Verify Code' : 'Send Code',
                   onTap: () {
@@ -152,7 +160,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text('Enter Verification Code'),
+                          title: const Text('Enter Verification Code'),
                           content: TextField(
                             keyboardType: TextInputType.number,
                             maxLength: 6,
@@ -174,7 +182,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Text(
                     'You can resend the code in $_resendCooldown seconds.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 if (isCodeSent && _resendCooldown == 0)
                   CustomElevatedButton(

@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../widgets/CustomElevatedButton.dart';
 import '../widgets/CustomTextFormField.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 import 'ResetPasswordDone_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
+
   @override
   _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
 }
@@ -25,13 +25,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           await user.updatePassword(_newPasswordController.text.trim());
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PasswordUpdatedScreen()));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (_) => const PasswordUpdatedScreen()));
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No user is signed in currently.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No user is signed in currently.')));
         }
       } catch (e) {
         // Handle error
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     }
   }
@@ -39,7 +42,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Reset Password')),
+      appBar: AppBar(title: const Text('Reset Password')),
       body: Center(
         child: Form(
           key: _formKey,

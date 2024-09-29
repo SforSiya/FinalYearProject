@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mathmind/screens/patient_signup_screen.dart';
 import 'package:mathmind/screens/signup_screen.dart';
 import '../helper/auth_service.dart';
 
 class ParentRegistrationScreen extends StatefulWidget {
+  const ParentRegistrationScreen({super.key});
+
   @override
-  _ParentRegistrationScreenState createState() => _ParentRegistrationScreenState();
+  _ParentRegistrationScreenState createState() =>
+      _ParentRegistrationScreenState();
 }
 
 class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
@@ -29,7 +31,8 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PatientRegistrationScreen(parentEmail: _emailController.text),
+              builder: (context) =>
+                  PatientRegistrationScreen(parentEmail: _emailController.text),
             ),
           );
         }
@@ -47,14 +50,15 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Email Already in Use'),
-        content: Text('The email address is already in use by another account. Please try logging in instead.'),
+        title: const Text('Email Already in Use'),
+        content: const Text(
+            'The email address is already in use by another account. Please try logging in instead.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -65,14 +69,15 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Sign Up Failed'),
-        content: Text(message ?? 'An unknown error occurred. Please try again.'),
+        title: const Text('Sign Up Failed'),
+        content:
+            Text(message ?? 'An unknown error occurred. Please try again.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -83,7 +88,7 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Parent Registration'),
+        title: const Text('Parent Registration'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,7 +98,7 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
             children: [
               TextFormField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(labelText: 'Username'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your username';
@@ -103,7 +108,7 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
               ),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
@@ -113,7 +118,7 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -122,10 +127,10 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _registerParent,
-                child: Text('Register'),
+                child: const Text('Register'),
               ),
             ],
           ),
@@ -134,34 +139,3 @@ class _ParentRegistrationScreenState extends State<ParentRegistrationScreen> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

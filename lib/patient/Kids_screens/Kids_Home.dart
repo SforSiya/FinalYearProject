@@ -3,12 +3,12 @@ import 'package:mathmind/patient/Kids_screens/shapes_reading/shape_page.dart';
 import 'Reading_pages/Reading.dart';
 import 'Setting/settings_page.dart';
 import 'games/games_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class KidsHome extends StatefulWidget {
   final String username; // Corrected username parameter
 
-  const KidsHome({Key? key, required this.username}) : super(key: key); // Ensure 'username' is passed
+  const KidsHome(
+      {super.key, required this.username}); // Ensure 'username' is passed
 
   @override
   State<KidsHome> createState() => _KidsHomeState();
@@ -21,7 +21,8 @@ class _KidsHomeState extends State<KidsHome> {
       appBar: AppBar(
         automaticallyImplyLeading: false, // This removes the back button
         // Display the user's username
-        title: Text('Hello ${widget.username}'), // Using 'username' correctly here
+        title:
+            Text('Hello ${widget.username}'), // Using 'username' correctly here
         actions: [
           IconButton(
             icon: const Icon(Icons.menu),
@@ -38,17 +39,22 @@ class _KidsHomeState extends State<KidsHome> {
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
           children: [
-            buildGridItem(context, Icons.looks_one, 'Numbers', 'números', const NumbersPage(), Colors.blue.shade200),
-            buildGridItem(context, Icons.book, 'Reading', 'Leer', const ReadingPage(), Colors.green.shade300),
-            buildGridItem(context, Icons.category, 'Shapes', 'Formas', const ShapesPage(), Colors.purple.shade100),
-            buildGridItem(context, Icons.settings, 'Settings', 'Ajustes', const SettingsPage(), Colors.pink.shade100),
+            buildGridItem(context, Icons.looks_one, 'Numbers', 'números',
+                const NumbersPage(), Colors.blue.shade200),
+            buildGridItem(context, Icons.book, 'Reading', 'Leer',
+                const ReadingPage(), Colors.green.shade300),
+            buildGridItem(context, Icons.category, 'Shapes', 'Formas',
+                const ShapesPage(), Colors.purple.shade100),
+            buildGridItem(context, Icons.settings, 'Settings', 'Ajustes',
+                const SettingsPage(), Colors.pink.shade100),
           ],
         ),
       ),
     );
   }
 
-  Widget buildGridItem(BuildContext context, IconData icon, String title, String subtitle, Widget page, Color color) {
+  Widget buildGridItem(BuildContext context, IconData icon, String title,
+      String subtitle, Widget page, Color color) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -76,7 +82,10 @@ class _KidsHomeState extends State<KidsHome> {
             const SizedBox(height: 4),
             Text(
               title,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
             Text(
               subtitle,

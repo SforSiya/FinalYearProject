@@ -17,10 +17,12 @@ Widget drawCircle() {
   return Container(
     width: 100,
     height: 100,
-    decoration: BoxDecoration(
+    decoration: const BoxDecoration(
       color: Colors.amber,
       shape: BoxShape.circle,
-      boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black26, spreadRadius: 2)],
+      boxShadow: [
+        BoxShadow(blurRadius: 10, color: Colors.black26, spreadRadius: 2)
+      ],
     ),
   );
 }
@@ -35,21 +37,21 @@ Widget drawSquare() {
 
 Widget drawTriangle() {
   return CustomPaint(
-    size: Size(100, 100),
+    size: const Size(100, 100),
     painter: TrianglePainter(),
   );
 }
 
 Widget drawPentagon() {
   return CustomPaint(
-    size: Size(100, 100),
+    size: const Size(100, 100),
     painter: PentagonPainter(),
   );
 }
 
 Widget drawQuadrilateral() {
   return CustomPaint(
-    size: Size(100, 100),
+    size: const Size(100, 100),
     painter: QuadrilateralPainter(),
   );
 }

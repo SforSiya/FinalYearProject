@@ -3,6 +3,8 @@ import 'package:animated_background/animated_background.dart'; // Import the ani
 import 'game_screen.dart'; // Import the GameScreen file
 
 class StartScreen extends StatefulWidget {
+  const StartScreen({super.key});
+
   @override
   _StartScreenState createState() => _StartScreenState();
 }
@@ -13,8 +15,8 @@ class _StartScreenState extends State<StartScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Start Screen"),
-        backgroundColor: Color(0xFF88AB8E), // Your title bar color
+        title: const Text("Start Screen"),
+        backgroundColor: const Color(0xFF88AB8E), // Your title bar color
       ),
       body: AnimatedBackground(
         vsync: this,
@@ -29,12 +31,12 @@ class _StartScreenState extends State<StartScreen>
         ),
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(10.0),
-            margin: EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.all(10.0),
+            margin: const EdgeInsets.symmetric(horizontal: 24.0),
             decoration: BoxDecoration(
-              color: Color(0xFF9CA986),
+              color: const Color(0xFF9CA986),
               borderRadius: BorderRadius.circular(12.0),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 8.0,
@@ -46,7 +48,7 @@ class _StartScreenState extends State<StartScreen>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Add Numbers',
                   style: TextStyle(
                     fontSize: 24,
@@ -54,30 +56,33 @@ class _StartScreenState extends State<StartScreen>
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'Test your addition skills in this fun game. '
-                      'You have 30 seconds to answer as many questions as you can. '
-                      'Try to get as many correct answers as possible!',
+                  'You have 30 seconds to answer as many questions as you can. '
+                  'Try to get as many correct answers as possible!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => GameScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const GameScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white, // Button background color
-                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Adjust the padding for size
-                    textStyle: TextStyle(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16.0), // Adjust the padding for size
+                    textStyle: const TextStyle(
                       fontSize: 18, // Adjust font size as needed
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Start Game',
                     style: TextStyle(color: Color(0xFF9CA986)),
                   ),

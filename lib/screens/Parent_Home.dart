@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 /*
 class PatientsListScreen extends StatelessWidget {
   final String parentEmail;
@@ -60,13 +59,13 @@ class PatientsListScreen extends StatelessWidget {
 class ParentHomeScreen extends StatelessWidget {
   final List<Map<String, dynamic>> childrenData;
 
-  ParentHomeScreen({required this.childrenData});
+  const ParentHomeScreen({super.key, required this.childrenData});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Parent Home'),
+        title: const Text('Parent Home'),
       ),
       body: ListView.builder(
         itemCount: childrenData.length,
@@ -81,4 +80,3 @@ class ParentHomeScreen extends StatelessWidget {
     );
   }
 }
-

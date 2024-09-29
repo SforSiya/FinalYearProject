@@ -35,12 +35,13 @@ class NumbersPage extends StatelessWidget {
               Icons.add,
               Colors.redAccent,
               Colors.red[100],
-                  () {
+              () {
                 // Navigate to the addition game
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  StartScreen(), // Replace with your actual page
+                    builder: (context) =>
+                        const StartScreen(), // Replace with your actual page
                   ),
                 );
               },
@@ -52,12 +53,13 @@ class NumbersPage extends StatelessWidget {
               Icons.category,
               Colors.pinkAccent,
               Colors.pink[100],
-                  () {
+              () {
                 // Navigate to the shapes game
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  ShapeSplashScreen(), // Replace with your actual page
+                    builder: (context) =>
+                        const ShapeSplashScreen(), // Replace with your actual page
                   ),
                 );
               },
@@ -69,12 +71,13 @@ class NumbersPage extends StatelessWidget {
               Icons.linear_scale,
               Colors.purpleAccent,
               Colors.purple[100],
-                  () {
+              () {
                 // Navigate to the matching game
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MatchPage(), // Replace with your actual page
+                    builder: (context) =>
+                        const MatchPage(), // Replace with your actual page
                   ),
                 );
               },
@@ -85,8 +88,8 @@ class NumbersPage extends StatelessWidget {
     );
   }
 
-  Widget buildGameButton(
-      BuildContext context, String title, IconData icon, Color textColor, Color? backgroundColor, VoidCallback onTap) {
+  Widget buildGameButton(BuildContext context, String title, IconData icon,
+      Color textColor, Color? backgroundColor, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -122,8 +125,6 @@ class NumbersPage extends StatelessWidget {
     );
   }
 }
-
-
 
 class MatchPage extends StatelessWidget {
   const MatchPage({super.key});

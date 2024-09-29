@@ -5,7 +5,8 @@ class Result_Screen extends StatefulWidget {
   final int score;
   final int totalQuestions;
 
-  Result_Screen({required this.score, required this.totalQuestions});
+  const Result_Screen(
+      {super.key, required this.score, required this.totalQuestions});
 
   @override
   _Result_ScreenState createState() => _Result_ScreenState();
@@ -16,7 +17,7 @@ class _Result_ScreenState extends State<Result_Screen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Game Over')),
+      appBar: AppBar(title: const Text('Game Over')),
       body: AnimatedBackground(
         vsync: this,
         behaviour: RandomParticleBehaviour(
@@ -30,12 +31,13 @@ class _Result_ScreenState extends State<Result_Screen>
         ),
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(16.0),
-            margin: EdgeInsets.symmetric(horizontal: 24.0), // Adjust margin as needed
+            padding: const EdgeInsets.all(16.0),
+            margin: const EdgeInsets.symmetric(
+                horizontal: 24.0), // Adjust margin as needed
             decoration: BoxDecoration(
-              color: Color(0xFF9CA986),
+              color: const Color(0xFF9CA986),
               borderRadius: BorderRadius.circular(12.0),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 8.0,
@@ -48,32 +50,40 @@ class _Result_ScreenState extends State<Result_Screen>
               children: [
                 Text(
                   'Total Questions Answered: ${widget.totalQuestions}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Correct Answers: ${widget.score}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Score: ${(widget.score / widget.totalQuestions * 100).toStringAsFixed(2)}%',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white, // Button background color
-                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Adjust the padding for size
-                    textStyle: TextStyle(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16.0), // Adjust the padding for size
+                    textStyle: const TextStyle(
                       fontSize: 18, // Adjust font size as needed
                     ),
                   ),
-                  child: Text('Play Again',
-                    style: TextStyle(color: Color(0xFF9CA986),),
+                  child: const Text(
+                    'Play Again',
+                    style: TextStyle(
+                      color: Color(0xFF9CA986),
+                    ),
                   ),
                 ),
               ],

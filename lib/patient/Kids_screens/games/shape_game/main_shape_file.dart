@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mathmind/patient/Kids_screens/games/shape_game/screens_ShapeGame/result_shape_screen.dart';
 
 class ShapeScreen extends StatefulWidget {
+  const ShapeScreen({super.key});
+
   @override
   _ShapeScreenState createState() => _ShapeScreenState();
 }
@@ -101,7 +103,7 @@ class _ShapeScreenState extends State<ShapeScreen> {
         ),
         actions: [
           TextButton(
-            child: Text(buttonText, style: TextStyle(fontSize: 18)),
+            child: Text(buttonText, style: const TextStyle(fontSize: 18)),
             onPressed: () {
               Navigator.of(context).pop();
               _generateNewShape();
@@ -116,12 +118,12 @@ class _ShapeScreenState extends State<ShapeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Shape Recognition Game'),
-        backgroundColor: Color(0xFF1572A1),
+        title: const Text('Shape Recognition Game'),
+        backgroundColor: const Color(0xFF1572A1),
         foregroundColor: Colors.white,
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFDEEDF0), Color(0xFF9AD0EC)],
             begin: Alignment.topLeft,
@@ -131,7 +133,7 @@ class _ShapeScreenState extends State<ShapeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "Guess the Shape!",
               style: TextStyle(
                 fontSize: 28,
@@ -139,31 +141,32 @@ class _ShapeScreenState extends State<ShapeScreen> {
                 color: Colors.black,
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Center(child: shapeWidgets[currentShapeIndex]),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             ...options.map((option) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Color(0xFF594545),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFF594545),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 15),
+                      elevation: 5,
+                    ),
+                    onPressed: () => _checkAnswer(option),
+                    child: Text(
+                      option,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  elevation: 5,
-                ),
-                onPressed: () => _checkAnswer(option),
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            )),
+                )),
           ],
         ),
       ),
@@ -177,7 +180,7 @@ Widget _drawRectangle() {
     width: 100,
     height: 60,
     decoration: BoxDecoration(
-      color: Color(0xFFAD88C6),
+      color: const Color(0xFFAD88C6),
       borderRadius: BorderRadius.circular(8),
     ),
   );
@@ -187,10 +190,12 @@ Widget _drawCircle() {
   return Container(
     width: 100,
     height: 100,
-    decoration: BoxDecoration(
+    decoration: const BoxDecoration(
       color: Color(0xFFA87676),
       shape: BoxShape.circle,
-      boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black26, spreadRadius: 2)],
+      boxShadow: [
+        BoxShadow(blurRadius: 10, color: Colors.black26, spreadRadius: 2)
+      ],
     ),
   );
 }
@@ -199,27 +204,27 @@ Widget _drawSquare() {
   return Container(
     width: 100,
     height: 100,
-    color: Color(0xFF3A4D39),
+    color: const Color(0xFF3A4D39),
   );
 }
 
 Widget _drawTriangle() {
   return CustomPaint(
-    size: Size(100, 100),
+    size: const Size(100, 100),
     painter: TrianglePainter(),
   );
 }
 
 Widget _drawPentagon() {
   return CustomPaint(
-    size: Size(100, 100),
+    size: const Size(100, 100),
     painter: PentagonPainter(),
   );
 }
 
 Widget _drawQuadrilateral() {
   return CustomPaint(
-    size: Size(100, 100),
+    size: const Size(100, 100),
     painter: QuadrilateralPainter(),
   );
 }
