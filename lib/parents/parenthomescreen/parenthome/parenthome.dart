@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mathmind/parents/parenthomescreen/groupchat/chatroom.dart';
-class ParentHome extends StatelessWidget {
-  const ParentHome(
-      {super.key}); //current user will be passed as an argument when parent screen be called
+import 'package:mathmind/parents/parenthomescreen/groupchat/chatroom.dart';  // Import the chat room screen
 
-//to enter the group chat
+class ParentHome extends StatelessWidget {
+  const ParentHome({super.key});
+
+  // Function to show join group dialog
   void _showJoinGroupDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -20,26 +22,69 @@ class ParentHome extends StatelessWidget {
               child: const Text('No'),
             ),
             TextButton(
-              onPressed: () {
-                // Close the dialog first
-                Navigator.of(context).pop();
-// Define your current user here. This should be replaced with the actual user data.
-                String currentUser =
-                    'example_user'; // Replace with your logic to get the current user
+              onPressed: () async {
+                // Get the current user from Firebase Auth
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user == null) {
+                  // Handle unauthenticated user
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please log in to join the group')),
+                  );
+                  return;
+                }
 
-                // Navigate to the ChatRoomScreen with the required parameter
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ChatRoomScreen(currentUser: currentUser),
-                  ),
-                );
+                String currentUserId = user.uid;
+
+                // Reference to the group collection in Firestore
+                CollectionReference groupCollection = FirebaseFirestore.instance.collection('group');
+
+                // Query Firestore to check if the user is already in a group or create a new one
+                QuerySnapshot groupSnapshot = await groupCollection
+                    .where('members', arrayContains: currentUserId)
+                    .get();
+
+                DocumentReference groupRef;
+                String groupId;
+
+                if (groupSnapshot.docs.isEmpty) {
+                  // If the user is not already in a group, create a new group and add the user
+                  groupRef = groupCollection.doc(); // Auto-generate groupId
+                  groupId = groupRef.id; // Get the generated groupId
+
+                  await groupRef.set({
+                    'members': [currentUserId], // Add the current user as the first member
+                  });
+
+                  print('New group created with ID: $groupId');
+                } else {
+                  // If the user is already in a group, get the existing group
+                  groupRef = groupSnapshot.docs.first.reference;
+                  groupId = groupRef.id; // Get the existing groupId
+
+                  await groupRef.update({
+                    'members': FieldValue.arrayUnion([currentUserId]), // Add user to members list if not already there
+                  });
+
+                  print('Joined existing group with ID: $groupId');
+                }
 
                 // Show a snackbar to confirm joining the group
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('You joined the group!')),
                 );
+
+                // Then, pop the route
+                Navigator.of(context).pop();
+
+                // Use microtask to delay navigation safely after the current frame
+                Future.microtask(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatRoomScreen(currentUser: currentUserId),
+                    ),
+                  );
+                });
               },
               child: const Text('Yes'),
             ),
@@ -48,14 +93,12 @@ class ParentHome extends StatelessWidget {
       },
     );
   }
-// showcasing parent home here
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Parents Dashboard',
-        ),
+        title: const Text('Parents Dashboard'),
         centerTitle: true,
       ),
       body: Column(
@@ -71,16 +114,13 @@ class ParentHome extends StatelessWidget {
               const CircleAvatar(
                 minRadius: 10,
                 maxRadius: 30,
-                //foregroundImage: AssetImage(assetName),
               ),
             ],
           ),
-          const SizedBox(height: 20), // Add some space between elements
+          const SizedBox(height: 20),
           Center(
             child: GestureDetector(
-              // move to next screen when tapped
-              onTap: () => _showJoinGroupDialog(
-                  context), // will lead to phychatrist page
+              onTap: () => _showJoinGroupDialog(context), // Trigger the join group dialog
               child: Container(
                 height: 82,
                 width: 277,
@@ -89,16 +129,15 @@ class ParentHome extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: const Center(
-                  child: Text(
-                      'Phychatrist Hunt'), // Center the text within the container
+                  child: Text('Psychiatrist Hunt'),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 20), // Space between containers
+          const SizedBox(height: 20),
           Center(
             child: GestureDetector(
-              onTap: () => _showJoinGroupDialog(context), // Will lead to Group
+              onTap: () => _showJoinGroupDialog(context), // Trigger the join group dialog
               child: Container(
                 height: 82,
                 width: 277,
@@ -107,8 +146,7 @@ class ParentHome extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: const Center(
-                  child: Text(
-                      'Join Support Group'), // Center the text within the container
+                  child: Text('Join Support Group'),
                 ),
               ),
             ),
