@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:mathmind/patient/Kids_screens/games/Addition_Game/result_screen.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
-
   @override
   _GameScreenState createState() => _GameScreenState();
 }
@@ -14,14 +12,13 @@ class _GameScreenState extends State<GameScreen> {
   int _timeLeft = 30; // Game time in seconds
   int _firstNumber = 0;
   int _secondNumber = 0;
-  final int _score = 0;
+  int _score = 0;
   int _totalQuestions = 0;
   int _correctAnswers = 0;
   String _userAnswer = '';
   Timer? _timer;
   final _random = Random();
-  final TextEditingController _controller =
-      TextEditingController(); // Controller for the TextField
+  final TextEditingController _controller = TextEditingController(); // Controller for the TextField
 
   @override
   void initState() {
@@ -31,7 +28,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_timeLeft > 0) {
           _timeLeft--;
@@ -83,23 +80,20 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF9CA986), // Set the background color
-      appBar: AppBar(title: const Text('Answer the Questions')),
+      backgroundColor: Color(0xFF9CA986), // Set the background color
+      appBar: AppBar(title: Text('Answer the Questions')),
       body: Center(
         child: Container(
-          padding:
-              const EdgeInsets.all(16.0), // Add padding around the container
-          margin: const EdgeInsets.all(
-              16.0), // Add margin to keep container away from screen edges
+          padding: const EdgeInsets.all(16.0), // Add padding around the container
+          margin: const EdgeInsets.all(16.0), // Add margin to keep container away from screen edges
           decoration: BoxDecoration(
             color: Colors.white, // Background color of the container
-            borderRadius: BorderRadius.circular(
-                12.0), // Rounded corners for the container
+            borderRadius: BorderRadius.circular(12.0), // Rounded corners for the container
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1), // Shadow color
                 blurRadius: 8.0, // Blur effect
-                offset: const Offset(0, 4), // Shadow position
+                offset: Offset(0, 4), // Shadow position
               ),
             ],
           ),
@@ -109,20 +103,17 @@ class _GameScreenState extends State<GameScreen> {
             children: [
               Text(
                 'Time Left: $_timeLeft seconds',
-                style: const TextStyle(
-                    fontSize: 18.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Text(
                 '$_firstNumber + $_secondNumber = ?',
-                style: const TextStyle(
-                    fontSize: 22.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
-                  controller:
-                      _controller, // Assign the controller to the TextField
+                  controller: _controller, // Assign the controller to the TextField
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
                     _userAnswer = value;
@@ -130,7 +121,7 @@ class _GameScreenState extends State<GameScreen> {
                   onSubmitted: (value) {
                     _checkAnswer();
                   },
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Your Answer',
                   ),
@@ -139,15 +130,12 @@ class _GameScreenState extends State<GameScreen> {
               ElevatedButton(
                 onPressed: _checkAnswer,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color(0xFF9CA986), // Button background color
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  backgroundColor: Color(0xFF9CA986), // Button background color
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                child: const Text(
+                child: Text(
                   'Submit',
-                  style:
-                      TextStyle(color: Colors.white), // Set text color to white
+                  style: TextStyle(color: Colors.white), // Set text color to white
                 ),
               ),
             ],

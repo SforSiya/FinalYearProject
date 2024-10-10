@@ -8,7 +8,7 @@ class CustomTextFormField extends StatelessWidget {
   final bool isPasswordVisible;
   final VoidCallback? onVisibilityToggle;
 
-  const CustomTextFormField({
+  CustomTextFormField({
     super.key,
     required this.controller,
     required this.obscureText,
@@ -23,15 +23,17 @@ class CustomTextFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12)
+        ),
         hintText: hintText,
         suffixIcon: obscureText
             ? IconButton(
-                icon: Icon(
-                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                ),
-                onPressed: onVisibilityToggle,
-              )
+          icon: Icon(
+            isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: onVisibilityToggle,
+        )
             : null,
       ),
       obscureText: obscureText && !isPasswordVisible,

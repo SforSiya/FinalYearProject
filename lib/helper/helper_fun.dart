@@ -13,7 +13,7 @@ void displayMessageToUser(String message, BuildContext context) {
 }
 
 class UserHelper {
-  static final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static FirebaseFirestore _db = FirebaseFirestore.instance;
 
   static Future<void> saveUser(User user) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -35,3 +35,5 @@ class UserHelper {
     }
   }
 }
+
+

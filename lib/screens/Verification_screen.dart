@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../helper/Phone_Auth.dart';
 import '../widgets/CustomElevatedButton.dart';
+import 'ResetPassword_screen.dart';
 
 class VerificationScreen extends StatefulWidget {
-  const VerificationScreen({super.key});
-
   @override
   _VerificationScreenState createState() => _VerificationScreenState();
 }
@@ -29,12 +28,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: const Text('Please enter the complete verification code.'),
+          title: Text('Error'),
+          content: Text('Please enter the complete verification code.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+              child: Text('OK'),
             ),
           ],
         ),
@@ -49,9 +48,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Verification'),
+        title: Text('Verification'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -63,14 +62,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Enter verification code',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -80,8 +79,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 _buildCodeInput(_controller4),
               ],
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               "If you didn't receive a code, ",
               style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
@@ -90,12 +89,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 // Add resend code logic here
                 print('Resend code tapped');
               },
-              child: const Text(
+              child: Text(
                 "Resend",
                 style: TextStyle(fontSize: 16, color: Colors.blue),
               ),
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: 30),
             CustomElevatedButton(
               text: 'Send',
               onTap: _submitVerificationCode,
@@ -119,7 +118,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
-        style: const TextStyle(fontSize: 24),
+        style: TextStyle(fontSize: 24),
       ),
     );
   }

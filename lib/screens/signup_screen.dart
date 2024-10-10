@@ -4,15 +4,15 @@ import '../widgets/CustomElevatedButton.dart';
 import '../widgets/CustomTextFormField.dart';
 
 import 'login_screen.dart';
+import '../patient/patient_home.dart';
 
 class PatientRegistrationScreen extends StatefulWidget {
   final String parentEmail;
 
-  const PatientRegistrationScreen({super.key, required this.parentEmail});
+  PatientRegistrationScreen({required this.parentEmail});
 
   @override
-  _PatientRegistrationScreenState createState() =>
-      _PatientRegistrationScreenState();
+  _PatientRegistrationScreenState createState() => _PatientRegistrationScreenState();
 }
 
 class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
@@ -39,7 +39,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
       if (user != null) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => LoginScreen()),
         );
       } else {
         // Handle the error (e.g., show a Snackbar or dialog)
@@ -51,14 +51,14 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Patient Registration'),
+        title: Text('Patient Registration'),
       ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
-            child: SizedBox(
+            child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,7 +74,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _emailController,
                     hintText: 'Email',
@@ -83,14 +83,13 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an email';
                       }
-                      if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
-                          .hasMatch(value)) {
+                      if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _parentEmailController,
                     hintText: 'Parent Email',
@@ -105,7 +104,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _passwordController,
                     hintText: 'Password',
@@ -123,7 +122,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _confirmPasswordController,
                     hintText: 'Confirm Password',
@@ -144,7 +143,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   CustomElevatedButton(
                     onTap: _registerPatient,
                     text: 'Register',
@@ -158,3 +157,6 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     );
   }
 }
+
+
+

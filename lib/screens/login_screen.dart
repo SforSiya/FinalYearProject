@@ -8,10 +8,10 @@ import '../widgets/CustomTextFormField.dart';
 import 'ForgetPassword_screen.dart';
 import 'Parent_Home.dart';
 import '../patient/Patient_Home.dart';
+import 'signup_screen.dart';
+
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -38,21 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
         User? user = result.user;
         if (user != null) {
           // Check if the user is a registered parent (Guardian) in Firestore
-          DocumentSnapshot userDoc =
-              await _firestore.collection('users').doc(user.uid).get();
+          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
 
           if (userDoc.exists && userDoc['role'] == 'Guardian') {
             // Fetch children data associated with the parent
             AuthService authService = AuthService();
-            List<Map<String, dynamic>> childrenData = await authService
-                .fetchParentChildrenData(_emailController.text);
+            List<Map<String, dynamic>> childrenData = await authService.fetchParentChildrenData(_emailController.text);
 
             // Navigate to Parent Home, passing the children's data
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ParentHomeScreen(childrenData: childrenData)),
+              MaterialPageRoute(builder: (context) => ParentHomeScreen(childrenData: childrenData)),
             );
           } else {
             _showError("No parent account found with this email.");
@@ -77,8 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
         User? user = result.user;
         if (user != null) {
           // Check if the user is a registered patient in Firestore
-          DocumentSnapshot userDoc =
-              await _firestore.collection('users').doc(user.uid).get();
+          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
 
           if (userDoc.exists && userDoc['role'] == 'Patient') {
             // Verify that the patient's parentEmail matches a registered parent
@@ -93,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Navigate to Patient Home
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PatientHome()),
+                MaterialPageRoute(builder: (context) => PatientHome()),
               );
             } else {
               _showError("No parent account associated with this patient.");
@@ -113,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // Handle login based on role
   Future<void> _login() async {
     if (_selectedRole == 'Guardian') {
-      _parentLogin(); // Call parent login logic
+      _parentLogin();  // Call parent login logic
     } else if (_selectedRole == 'Patient') {
       _patientLogin(); // Call patient login logic
     } else {
@@ -138,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -147,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
             size: 80,
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
-          const Expanded(
+          Expanded(
             child: Center(
               child: Text(
                 'Welcome Back!',
@@ -161,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  SizedBox(
+                  Container(
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: Column(
                       children: [
@@ -181,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                         CustomTextFormField(
                           controller: _passwordController,
                           hintText: 'Password',
@@ -199,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                         DropdownButtonFormField<String>(
                           decoration: InputDecoration(
                             hintText: 'Role',
@@ -207,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          items: const [
+                          items: [
                             DropdownMenuItem(
                               value: 'Patient',
                               child: Text('Patient'),
@@ -232,33 +227,30 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  SizedBox(height: 5),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const ForgotPasswordScreen()),
+                        MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
                       );
                     },
-                    child: const Text("Forget Password?"),
+                    child: Text("Forget Password?"),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   CustomElevatedButton(
                     text: 'LOGIN',
                     onTap: _login, // Call the login method
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const ParentRegistrationScreen()),
+                        MaterialPageRoute(builder: (context) => ParentRegistrationScreen()),
                       );
                     },
-                    child: const Text("Don't have an account? Sign up"),
+                    child: Text("Don't have an account? Sign up"),
                   ),
                 ],
               ),
@@ -269,3 +261,5 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+

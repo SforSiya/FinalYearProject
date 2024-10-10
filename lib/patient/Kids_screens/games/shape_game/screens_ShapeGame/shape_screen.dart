@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mathmind/patient/Kids_screens/games/shape_game/screens_ShapeGame/result_shape_screen.dart';
 
 class ShapeScreen extends StatefulWidget {
-  const ShapeScreen({super.key});
-
   @override
   _ShapeScreenState createState() => _ShapeScreenState();
 }
@@ -93,7 +91,9 @@ class _ShapeScreenState extends State<ShapeScreen> {
           builder: (_) => ResultScreenShape(
             score: correctAnswers,
             totalQuestions: totalQuestions,
-            userId: userId!, // Passing the userId
+            userId: userId!,
+
+            // Passing the userId
           ),
         ),
       );
@@ -113,20 +113,20 @@ class _ShapeScreenState extends State<ShapeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Shape Game')),
+      appBar: AppBar(title: Text('Shape Game')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'Identify the Shape',
             style: TextStyle(fontSize: 24),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           Text(
             shapes[currentShapeIndex],
-            style: const TextStyle(fontSize: 48),
+            style: TextStyle(fontSize: 48),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           Column(
             children: options.map((option) {
               return ElevatedButton(

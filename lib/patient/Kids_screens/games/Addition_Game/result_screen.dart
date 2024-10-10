@@ -1,23 +1,84 @@
+
 import 'package:flutter/material.dart';
 import 'package:animated_background/animated_background.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Result_Screen extends StatefulWidget {
   final int score;
   final int totalQuestions;
 
-  const Result_Screen(
-      {super.key, required this.score, required this.totalQuestions});
+  Result_Screen({required this.score, required this.totalQuestions});
 
   @override
   _Result_ScreenState createState() => _Result_ScreenState();
 }
 
-class _Result_ScreenState extends State<Result_Screen>
-    with SingleTickerProviderStateMixin {
+class _Result_ScreenState extends State<Result_Screen> with SingleTickerProviderStateMixin {
+  bool _isUpdating = false; // State variable to track if the score is updating
+
+  @override
+  void initState() {
+    super.initState();
+    _updateHighScore(); // Call the function when the widget is initialized
+  }
+
+  // Function to update the high score for the addition game in Firestore
+  Future<void> _updateHighScore() async {
+    setState(() {
+      _isUpdating = true; // Set the updating state to true
+    });
+
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final String userId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Get the current user's ID
+    final String gameName = 'additionGame'; // Define the game name
+
+    // Reference to the user's game data subcollection and game document
+    final DocumentReference gameDataRef = firestore
+        .collection('users')
+        .doc(userId)
+        .collection('gameData')
+        .doc(gameName); // Use gameName to store different games
+
+    try {
+      // Fetch the current highest score from Firestore for this game
+      final DocumentSnapshot gameDataSnapshot = await gameDataRef.get();
+
+      if (gameDataSnapshot.exists) {
+        // If the document exists, compare the current score with the saved highest score
+        int currentHighestScore = gameDataSnapshot['highestScore'] ?? 0;
+
+        // If the current score is higher than the saved score, update it
+        if (widget.score > currentHighestScore) {
+          await gameDataRef.set({
+            'highestScore': widget.score,
+            'lastPlayed': Timestamp.now(), // Optionally track the last time the game was played
+          }, SetOptions(merge: true));
+          print("New highest score saved for addition game!");
+        } else {
+          print("Score is lower than the current highest score for addition game, not updated.");
+        }
+      } else {
+        // If the document doesn't exist, create it with the current score
+        await gameDataRef.set({
+          'highestScore': widget.score,
+          'lastPlayed': Timestamp.now(), // Optionally track the last time the game was played
+        });
+        print("Highest score document created for addition game!");
+      }
+    } catch (e) {
+      print("Error updating highest score: $e");
+    } finally {
+      setState(() {
+        _isUpdating = false; // Reset the updating state
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Game Over')),
+      appBar: AppBar(title: Text('Game Over')),
       body: AnimatedBackground(
         vsync: this,
         behaviour: RandomParticleBehaviour(
@@ -30,14 +91,15 @@ class _Result_ScreenState extends State<Result_Screen>
           ),
         ),
         child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            margin: const EdgeInsets.symmetric(
-                horizontal: 24.0), // Adjust margin as needed
+          child: _isUpdating
+              ? CircularProgressIndicator() // Show loading indicator while updating
+              : Container(
+            padding: EdgeInsets.all(16.0),
+            margin: EdgeInsets.symmetric(horizontal: 24.0), // Adjust margin as needed
             decoration: BoxDecoration(
-              color: const Color(0xFF9CA986),
+              color: Color(0xFF9CA986),
               borderRadius: BorderRadius.circular(12.0),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 8.0,
@@ -50,40 +112,33 @@ class _Result_ScreenState extends State<Result_Screen>
               children: [
                 Text(
                   'Total Questions Answered: ${widget.totalQuestions}',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Correct Answers: ${widget.score}',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Score: ${(widget.score / widget.totalQuestions * 100).toStringAsFixed(2)}%',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white, // Button background color
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0), // Adjust the padding for size
-                    textStyle: const TextStyle(
+                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Adjust the padding for size
+                    textStyle: TextStyle(
                       fontSize: 18, // Adjust font size as needed
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Play Again',
-                    style: TextStyle(
-                      color: Color(0xFF9CA986),
-                    ),
+                    style: TextStyle(color: Color(0xFF9CA986)),
                   ),
                 ),
               ],
@@ -94,3 +149,4 @@ class _Result_ScreenState extends State<Result_Screen>
     );
   }
 }
+

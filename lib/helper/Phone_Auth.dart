@@ -1,4 +1,7 @@
+
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/ResetPassword_screen.dart';
@@ -11,29 +14,33 @@ class PhoneAuthService {
   String? verificationId;
 
   Future<void> verifyPhoneNumber(BuildContext context) async {
-    verificationCompleted(PhoneAuthCredential credential) async {
+    PhoneVerificationCompleted verificationCompleted =
+        (PhoneAuthCredential credential) async {
       await _auth.signInWithCredential(credential);
-    }
+    };
 
-    verificationFailed(FirebaseAuthException authException) {
+    PhoneVerificationFailed verificationFailed =
+        (FirebaseAuthException authException) {
       print(authException.message);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Verification failed. Please try again.')),
+        SnackBar(content: Text('Verification failed. Please try again.')),
       );
-    }
+    };
 
-    codeSent(String verificationId, [int? forceResendingToken]) async {
+    PhoneCodeSent codeSent =
+        (String verificationId, [int? forceResendingToken]) async {
       this.verificationId = verificationId;
       // Navigate to the verification code screen
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const VerificationScreen()),
+        MaterialPageRoute(builder: (context) => VerificationScreen()),
       );
-    }
+    };
 
-    codeAutoRetrievalTimeout(String verificationId) {
+    PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
       this.verificationId = verificationId;
-    }
+    };
 
     try {
       await _auth.verifyPhoneNumber(
@@ -58,13 +65,12 @@ class PhoneAuthService {
       await _auth.signInWithCredential(credential);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
+        MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
       );
     } catch (e) {
       print("Failed to sign in with code: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Invalid verification code. Please try again.')),
+        SnackBar(content: Text('Invalid verification code. Please try again.')),
       );
     }
   }
