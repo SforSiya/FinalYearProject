@@ -10,7 +10,6 @@ import 'Parent_Home.dart';
 import '../patient/Patient_Home.dart';
 import 'signup_screen.dart';
 
-
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -38,17 +37,21 @@ class _LoginScreenState extends State<LoginScreen> {
         User? user = result.user;
         if (user != null) {
           // Check if the user is a registered parent (Guardian) in Firestore
-          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+          DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(user.uid).get();
 
           if (userDoc.exists && userDoc['role'] == 'Guardian') {
             // Fetch children data associated with the parent
             AuthService authService = AuthService();
-            List<Map<String, dynamic>> childrenData = await authService.fetchParentChildrenData(_emailController.text);
+            List<Map<String, dynamic>> childrenData =
+            await authService.fetchParentChildrenData(_emailController.text);
 
             // Navigate to Parent Home, passing the children's data
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ParentHomeScreen(childrenData: childrenData)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ParentHomeScreen(childrenData: childrenData)),
             );
           } else {
             _showError("No parent account found with this email.");
@@ -73,7 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
         User? user = result.user;
         if (user != null) {
           // Check if the user is a registered patient in Firestore
-          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+          DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(user.uid).get();
 
           if (userDoc.exists && userDoc['role'] == 'Patient') {
             // Verify that the patient's parentEmail matches a registered parent
@@ -108,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // Handle login based on role
   Future<void> _login() async {
     if (_selectedRole == 'Guardian') {
-      _parentLogin();  // Call parent login logic
+      _parentLogin(); // Call parent login logic
     } else if (_selectedRole == 'Patient') {
       _patientLogin(); // Call patient login logic
     } else {
@@ -132,134 +136,130 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Icon(
-            Icons.person,
-            size: 80,
-            color: Theme.of(context).colorScheme.inversePrimary,
-          ),
-          Expanded(
-            child: Center(
-              child: Text(
-                'Welcome Back!',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Form(
               key: _formKey,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Column(
-                      children: [
-                        CustomTextFormField(
-                          controller: _emailController,
-                          obscureText: false,
-                          hintText: 'Email',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            final emailRegex = RegExp(
-                                r'^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                            if (!emailRegex.hasMatch(value)) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        CustomTextFormField(
-                          controller: _passwordController,
-                          hintText: 'Password',
-                          obscureText: !_isPasswordVisible,
-                          isPasswordVisible: _isPasswordVisible,
-                          onVisibilityToggle: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            hintText: 'Role',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          items: [
-                            DropdownMenuItem(
-                              value: 'Patient',
-                              child: Text('Patient'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Guardian',
-                              child: Text('Guardian'),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedRole = value;
-                            });
-                          },
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Please select a role';
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
+                  SizedBox(height: screenHeight * 0.08),
+                  Text(
+                    'Welcome Back!',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.07,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 5),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
-                      );
+                  SizedBox(height: screenHeight * 0.05),
+                  CustomTextFormField(
+                    controller: _emailController,
+                    obscureText: false,
+                    hintText: 'Email',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      final emailRegex = RegExp(
+                          r'^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                      if (!emailRegex.hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
                     },
-                    child: Text("Forget Password?"),
+                  ),
+                  SizedBox(height: 16),
+                  CustomTextFormField(
+                    controller: _passwordController,
+                    hintText: 'Password',
+                    obscureText: !_isPasswordVisible,
+                    isPasswordVisible: _isPasswordVisible,
+                    onVisibilityToggle: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      hintText: 'Role',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'Patient',
+                        child: Text('Patient'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Guardian',
+                        child: Text('Guardian'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedRole = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select a role';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPasswordScreen()),
+                        );
+                      },
+                      child: Text("Forget Password?"),
+                    ),
                   ),
                   SizedBox(height: 10),
                   CustomElevatedButton(
                     text: 'LOGIN',
                     onTap: _login, // Call the login method
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ParentRegistrationScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => ParentRegistrationScreen()),
                       );
                     },
                     child: Text("Don't have an account? Sign up"),
                   ),
+                  SizedBox(height: screenHeight * 0.05),
                 ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 }
-
-
