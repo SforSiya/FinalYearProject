@@ -83,6 +83,7 @@ flutter:
     - assets/
     - assets/kids/avatars/
     - assets/splash_screen.gif
+    - assets/age_set.gif
     - assets/kids/games/shapes_background.gif
     - assets/kids/raccoon.png
     - assets/kids/games_icon.png

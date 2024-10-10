@@ -1,17 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mathmind/patient/Kids_screens/profile/profile_kid.dart';
 import 'package:mathmind/patient/Kids_screens/shapes_reading/shape_page.dart';
 import 'Progress_page/progress_screen.dart';
 import 'Reading_pages/Reading.dart';
 import 'games/games_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-// KidsHome screen with BottomNavigationBar
 class KidsHome extends StatefulWidget {
-  final String username; // Corrected username parameter
-
-  const KidsHome({Key? key, required this.username}) : super(key: key); // Ensure 'username' is passed
+  const KidsHome({Key? key}) : super(key: key);
 
   @override
   State<KidsHome> createState() => _KidsHomeState();
@@ -19,16 +16,50 @@ class KidsHome extends StatefulWidget {
 
 class _KidsHomeState extends State<KidsHome> {
   int _selectedIndex = 0; // For keeping track of the selected tab
-
-  // List of screens to display
-  final List<Widget> _screens = [];
+  String? _username;
+  String? _avatarUrl;
 
   @override
   void initState() {
     super.initState();
-    // Initialize screens with KidsHome and ProfileScreen
-    _screens.add(buildHomeScreen());
-    _screens.add(KidsProfilePage());
+    _fetchProfileData(); // Fetch profile data on initialization
+  }
+
+  // Function to fetch kid's profile from Firestore
+  Future<void> _fetchProfileData() async {
+    try {
+      // Get the currently logged-in user's ID
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      // Reference to the user's subcollection for kids
+      CollectionReference kidsCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('kids');
+
+      // Fetch the document for the kid
+      DocumentSnapshot kidDoc = await kidsCollection.doc('kid info').get();
+
+      if (kidDoc.exists) {
+        Map<String, dynamic> kidData = kidDoc.data() as Map<String, dynamic>;
+        setState(() {
+          _username = kidData['name'] ?? 'Guest'; // Set the username or default to "Guest"
+          _avatarUrl = kidData['avatar'] ?? 'assets/kids/raccoon.png'; // Set the avatar or default avatar
+        });
+      } else {
+        print("Kid profile not found");
+      }
+    } catch (e) {
+      print('Error fetching profile: $e');
+    }
+  }
+
+  // List of screens to display in Bottom Navigation Bar
+  List<Widget> _screens() {
+    return [
+      buildHomeScreen(),
+      KidsProfilePage(),
+    ];
   }
 
   void _onItemTapped(int index) {
@@ -38,7 +69,7 @@ class _KidsHomeState extends State<KidsHome> {
   }
 
   Widget buildHomeScreen() {
-    return SingleChildScrollView( // Makes the whole page scrollable
+    return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(top: 40.0, left: 16.0, right: 16.0),
         child: Column(
@@ -49,7 +80,10 @@ class _KidsHomeState extends State<KidsHome> {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/kids/raccoon.png'), // Replace with your image
+                    backgroundImage: _avatarUrl != null
+                        ? NetworkImage(_avatarUrl!)
+                        : const AssetImage('assets/kids/raccoon.png')
+                    as ImageProvider,
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -57,7 +91,7 @@ class _KidsHomeState extends State<KidsHome> {
                     style: TextStyle(fontSize: 18, color: Color(0xFFFF9F29)),
                   ),
                   Text(
-                    widget.username,
+                    _username ?? 'Loading...',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -73,8 +107,8 @@ class _KidsHomeState extends State<KidsHome> {
               crossAxisCount: 2,
               crossAxisSpacing: 16.0,
               mainAxisSpacing: 16.0,
-              shrinkWrap: true, // Allows the GridView to take only necessary space
-              physics: const NeverScrollableScrollPhysics(), // Prevents inner scrolling within GridView
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 buildGridItem(
                   context,
@@ -88,7 +122,7 @@ class _KidsHomeState extends State<KidsHome> {
                   context,
                   'assets/kids/reading_icon.png',
                   'Reading',
-                  'Reading some word',
+                  'Reading some words',
                   const ReadingPage(),
                   const Color(0xFFFFF5E5),
                 ),
@@ -133,7 +167,7 @@ class _KidsHomeState extends State<KidsHome> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(imagePath, width: 60, height: 60), // Add your icons here
+            Image.asset(imagePath, width: 60, height: 60),
             const SizedBox(height: 12),
             Text(
               title,
@@ -154,16 +188,10 @@ class _KidsHomeState extends State<KidsHome> {
     );
   }
 
-  // Function to get the current user ID from FirebaseAuth
-  String? getCurrentUserId() {
-    User? user = FirebaseAuth.instance.currentUser;
-    return user?.uid;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex], // Displays either Home or Profile screen
+      body: _screens()[_selectedIndex], // Displays either Home or Profile screen
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -184,5 +212,3 @@ class _KidsHomeState extends State<KidsHome> {
     );
   }
 }
-
-

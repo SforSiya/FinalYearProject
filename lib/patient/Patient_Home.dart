@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // For Firebase Authentication
-import 'package:cloud_firestore/cloud_firestore.dart'; // For Firestore
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Kids_screens/Kids_Home.dart';
 import 'Teenager_screens/Teenager_Home.dart';
 
@@ -63,7 +62,7 @@ class _PatientHomeState extends State<PatientHome> {
       if (username != null) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => KidsHome(username: username!), // Pass the username
+            builder: (context) => KidsHome(), // Pass the username
           ),
         );
       } else {
@@ -78,28 +77,41 @@ class _PatientHomeState extends State<PatientHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Patient Home')),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextField(
-                controller: _ageController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter your age',
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _navigateBasedOnAge,
-                child: const Text('Submit'),
-              ),
-            ],
+      body: Stack(
+        children: [
+          // Background GIF using Image.asset
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/age_set.gif',
+              fit: BoxFit.cover, // Make the GIF cover the entire background
+            ), // Animate the GIF (optional)
           ),
-        ),
+
+          // Foreground content
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextField(
+                    controller: _ageController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter your age',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _navigateBasedOnAge,
+                    child: const Text('Submit'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

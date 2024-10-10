@@ -53,7 +53,7 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
         hobbyController.text = kidData['hobby'] ?? 'Playing puzzles'; // Default hobby if not found
         selectedGender = kidData['gender'] ?? 'Male'; // Default gender if not found
         selectedAge = kidData['age'] ?? 5; // Default age if not found
-        selectedAvatar = kidData['avatar'] ?? 'assets/kids_profile.png'; // Fetch avatar or use default
+        selectedAvatar = kidData['avatar'] ?? 'assets/kids/reading_icon.png.png'; // Fetch avatar or use default
 
         setState(() {}); // Refresh UI
       }
@@ -309,7 +309,7 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
