@@ -16,7 +16,7 @@ class _ShapeSplashScreenState extends State<ShapeSplashScreen> {
           // Background GIF
           Positioned.fill(
             child: Image.asset(
-              'assets/games/shapes_background.gif',
+              'assets/kids/games/shapes_background.gif',
               fit: BoxFit.cover,
             ),
           ),

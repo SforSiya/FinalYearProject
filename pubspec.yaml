@@ -81,6 +81,7 @@ flutter:
   assets:
   #- assets/logo.png
     - assets/
+    - assets/kids/avatars/
     - assets/splash_screen.gif
     - assets/kids/games/shapes_background.gif
     - assets/kids/raccoon.png

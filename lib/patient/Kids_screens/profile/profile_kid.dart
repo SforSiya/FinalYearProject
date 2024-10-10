@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore package
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth package
 
+// Define the KidsProfilePage widget
 class KidsProfilePage extends StatefulWidget {
   @override
   _KidsProfilePageState createState() => _KidsProfilePageState();
 }
 
 class _KidsProfilePageState extends State<KidsProfilePage> {
+  // The rest of your existing code for the KidsProfilePage class
   bool isEditing = false;
 
   // Controllers for text fields
@@ -18,13 +20,18 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
   String selectedGender = 'Male';
   int selectedAge = 5;
 
+  // Avatar selection field
+  String selectedAvatar = 'assets/kids_profile.png'; // Default avatar path
+
   @override
   void initState() {
     super.initState();
     fetchKidsProfile();
   }
 
-  // Function to fetch kid's profile from Firestore
+
+  // Rest of the code...
+// Function to fetch kid's profile from Firestore
   Future<void> fetchKidsProfile() async {
     try {
       // Get the currently logged-in user's ID
@@ -46,6 +53,8 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
         hobbyController.text = kidData['hobby'] ?? 'Playing puzzles'; // Default hobby if not found
         selectedGender = kidData['gender'] ?? 'Male'; // Default gender if not found
         selectedAge = kidData['age'] ?? 5; // Default age if not found
+        selectedAvatar = kidData['avatar'] ?? 'assets/kids_profile.png'; // Fetch avatar or use default
+
         setState(() {}); // Refresh UI
       }
     } catch (e) {
@@ -54,6 +63,8 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
       );
     }
   }
+
+
 
   // Function to save kid's profile to Firestore
   Future<void> saveKidsProfile() async {
@@ -73,6 +84,7 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
         'age': selectedAge,
         'gender': selectedGender,
         'hobby': hobbyController.text,
+        'avatar': selectedAvatar, // Include the avatar field here
       };
 
       // Storing the kid's data with a unique document ID (or custom ID)
@@ -86,6 +98,42 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
       );
     }
   }
+
+
+  void _showAvatarSelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Choose an Avatar'),
+          content: Container(
+            width: double.maxFinite,
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 3 avatars per row
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: 9, // Number of avatars
+              itemBuilder: (BuildContext context, int index) {
+                String avatarUrl = 'assets/kids/avatars/avatar_$index.png'; // Avatar image path
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedAvatar = avatarUrl; // Update avatar path with the selected one
+                    });
+                    Navigator.pop(context); // Close the dialog
+                  },
+                  child: Image.asset(avatarUrl), // Display the avatar image
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,19 +159,34 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: screenHeight * 0.04),
-            Container(
-              width: screenWidth * 0.4,
-              height: screenWidth * 0.4,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.yellow[200]!, width: 5),
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/kids_profile.png', // Profile image
-                  fit: BoxFit.cover,
+            Stack(
+              children: [
+                Container(
+                  width: screenWidth * 0.4,
+                  height: screenWidth * 0.4,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.yellow[200]!, width: 5),
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      selectedAvatar, // Display selected avatar
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+
                 ),
-              ),
+                if (isEditing) Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: Icon(Icons.camera_alt, size: 30),
+                    onPressed: () {
+                      _showAvatarSelectionDialog(context); // Trigger dialog to select new avatar
+                    },
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: screenHeight * 0.03),
             isEditing
@@ -157,7 +220,7 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
               '',
               style: TextStyle(
                 fontSize: screenWidth * 0.045,
-                color: Colors.blue[600],
+                color: Colors.blue[50],
                 fontFamily: 'ComicSans',
               ),
             ),
@@ -236,29 +299,25 @@ class _KidsProfilePageState extends State<KidsProfilePage> {
             SizedBox(height: screenHeight * 0.03),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.2),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightBlue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
-                ),
+              child: ElevatedButton(
                 onPressed: () {
+                  if (isEditing) {
+                    saveKidsProfile();
+                  }
                   setState(() {
-                    if (isEditing) {
-                      saveKidsProfile(); // Save data when leaving edit mode
-                    }
                     isEditing = !isEditing;
                   });
                 },
-                icon: Icon(isEditing ? Icons.save : Icons.edit, color: Colors.white, size: screenWidth * 0.07),
-                label: Text(
-                  isEditing ? 'Save' : 'Edit',
-                  style: TextStyle(fontSize: screenWidth * 0.05, color: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
+                child: Text(isEditing ? 'Save' : 'Edit'),
               ),
             ),
+            SizedBox(height: screenHeight * 0.04),
           ],
         ),
       ),
