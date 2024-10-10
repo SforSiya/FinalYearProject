@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mathmind/patient/Kids_screens/games/shape_game/screens_ShapeGame/shape_splash_screen.dart';
 
 import 'Addition_Game/first_page.dart';
+import 'levels_game/level_game.dart';
 
 class NumbersPage extends StatelessWidget {
   const NumbersPage({super.key});
@@ -74,7 +75,7 @@ class NumbersPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MatchPage(), // Replace with your actual page
+                    builder: (context) =>  LevelsPage(), // Replace with your actual page
                   ),
                 );
               },
@@ -125,16 +126,4 @@ class NumbersPage extends StatelessWidget {
 
 
 
-class MatchPage extends StatelessWidget {
-  const MatchPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Match Game'),
-      ),
-      body: const Center(child: Text('Match Game')),
-    );
-  }
-}

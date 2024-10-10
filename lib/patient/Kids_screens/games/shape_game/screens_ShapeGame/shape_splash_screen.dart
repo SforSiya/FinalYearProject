@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart'; // Import for displaying GIFs
 import '../main_shape_file.dart'; // Import the shape guessing screen
 
 class ShapeSplashScreen extends StatefulWidget {
@@ -79,6 +78,18 @@ class _ShapeSplashScreenState extends State<ShapeSplashScreen> {
                   ),
                 ],
               ),
+            ),
+          ),
+
+          // Custom Positioned Back Button
+          Positioned(
+            top: 40,
+            left: 16,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black, size: 30),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
           ),
         ],
