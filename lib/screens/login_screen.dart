@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import for FirebaseAuth and UserCredential
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import for Firestore
-import 'package:mathmind/parents/parenthomescreen/parenthome/parenthome.dart';
 import 'package:mathmind/screens/patient_signup_screen.dart';
 import '../helper/auth_service.dart';
 import '../widgets/CustomElevatedButton.dart';
@@ -53,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-              ParentHome()),
+                      ParentHomeScreen(childrenData: childrenData)),
             );
           } else {
             _showError("No parent account found with this email.");
