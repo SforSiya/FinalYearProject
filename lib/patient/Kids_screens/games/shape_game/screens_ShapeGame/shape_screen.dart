@@ -92,8 +92,6 @@ class _ShapeScreenState extends State<ShapeScreen> {
             score: correctAnswers,
             totalQuestions: totalQuestions,
             userId: userId!,
-
-            // Passing the userId
           ),
         ),
       );
@@ -112,26 +110,45 @@ class _ShapeScreenState extends State<ShapeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the size of the device's screen
+    var screenSize = MediaQuery.of(context).size;
+    var height = screenSize.height;
+    var width = screenSize.width;
+
     return Scaffold(
       appBar: AppBar(title: Text('Shape Game')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Responsive text size based on screen width
           Text(
             'Identify the Shape',
-            style: TextStyle(fontSize: 24),
+            style: TextStyle(fontSize: width * 0.06), // 6% of screen width
           ),
-          SizedBox(height: 20),
+          SizedBox(height: height * 0.02), // 2% of screen height
+
+          // Responsive shape text size
           Text(
             shapes[currentShapeIndex],
-            style: TextStyle(fontSize: 48),
+            style: TextStyle(fontSize: width * 0.12), // 12% of screen width
           ),
-          SizedBox(height: 20),
+          SizedBox(height: height * 0.03), // 3% of screen height
+
+          // Responsive button layout
           Column(
             children: options.map((option) {
-              return ElevatedButton(
-                onPressed: () => _handleAnswer(option),
-                child: Text(option),
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: height * 0.01),
+                child: ElevatedButton(
+                  onPressed: () => _handleAnswer(option),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(width * 0.7, height * 0.07), // Button size 70% width and 7% height
+                  ),
+                  child: Text(
+                    option,
+                    style: TextStyle(fontSize: width * 0.05), // 5% of screen width
+                  ),
+                ),
               );
             }).toList(),
           ),

@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ParentHomeScreen(childrenData: childrenData)),
+                      ParentHome()),
             );
           } else {
             _showError("No parent account found with this email.");
