@@ -75,7 +75,7 @@ class NumbersPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  LevelsPage(), // Replace with your actual page
+                    builder: (context) =>  SplashScreen_lvl(), // Replace with your actual page
                   ),
                 );
               },

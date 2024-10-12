@@ -137,7 +137,7 @@ class _ParentHomeState extends State<ParentHome> {
     return Scaffold(
 
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple[300],
+        backgroundColor: Colors.blue[300],
         elevation: 0,
         actions: [
           IconButton(
@@ -166,7 +166,7 @@ class _ParentHomeState extends State<ParentHome> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.purple[50]!, Colors.deepPurple[100]!],
+            colors: [Colors.white, Colors.blue[100]!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -179,7 +179,7 @@ class _ParentHomeState extends State<ParentHome> {
               Container(
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.deepPurple[300],
+                  color: Colors.blue[300],
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -242,14 +242,14 @@ class _ParentHomeState extends State<ParentHome> {
                               'Join Support Group',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.deepPurple[300],
+                                color: Colors.blue[300],
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(width: 10),
                             Icon(
                               Icons.add,
-                              color: Colors.deepPurple[300],
+                              color: Colors.blue[300],
                             ),
                           ],
                         ),
@@ -266,7 +266,7 @@ class _ParentHomeState extends State<ParentHome> {
                     child: Container(
                       height: 180,
                       decoration: BoxDecoration(
-                        color: Colors.deepPurple[100],
+                        color: Colors.blue[200],
                         borderRadius: BorderRadius.circular(18),
                       ),
                       child: Center(
@@ -276,7 +276,7 @@ class _ParentHomeState extends State<ParentHome> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple[300],
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -287,7 +287,7 @@ class _ParentHomeState extends State<ParentHome> {
                     child: Container(
                       height: 180,
                       decoration: BoxDecoration(
-                        color: Colors.deepPurple[300],
+                        color: Colors.blue[200],
                         borderRadius: BorderRadius.circular(18),
                       ),
                       child: Center(
@@ -309,7 +309,7 @@ class _ParentHomeState extends State<ParentHome> {
               Container(
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.deepPurple[200],
+                  color: Colors.blue[200],
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(

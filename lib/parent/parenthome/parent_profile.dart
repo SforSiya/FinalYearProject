@@ -37,15 +37,20 @@ class _ParentProfileState extends State<ParentProfile> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the size of the device's screen for responsiveness
+    var screenSize = MediaQuery.of(context).size;
+    var height = screenSize.height;
+    var width = screenSize.width;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple[100], // Lighter purple background
+        backgroundColor: Colors.purple[50], // Pastel purple background
         elevation: 0,
         title: Text(
-          'Your Profile',
+          'Settings',
           style: TextStyle(
-            fontSize: 20,
-            color: Colors.deepPurple[600], // Darker purple for text
+            fontSize: 22,
+            color: Colors.purple[600], // Darker purple for text
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -53,80 +58,83 @@ class _ParentProfileState extends State<ParentProfile> {
       ),
       body: userData == null
           ? Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 20),
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.deepPurple[100],
-              // Lighter purple for avatar background
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: Colors.deepPurple[600], // Darker purple for icon
+          : SingleChildScrollView( // Added SingleChildScrollView to prevent overflow
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Profile Picture (Placeholder for future expansion)
+              CircleAvatar(
+                radius: width * 0.12,
+                backgroundColor: Colors.purple[100],
+                child: Icon(
+                  Icons.person,
+                  size: width * 0.1,
+                  color: Colors.purple[400],
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              userData?['username'] ?? 'No username',
-              // Check if username exists
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple[600], // Darker purple for text
+              SizedBox(height: height * 0.03), // Spacing
+
+              // Display Username
+              Text(
+                userData?['username'] ?? 'No username available',
+                style: TextStyle(
+                  fontSize: width * 0.07,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple[600], // Pastel purple for username
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            buildProfileItem(
-              label: 'Your Email',
-              value: userData?['email'] ?? 'No email available',
-              // Check if email exists
-              icon: Icons.email,
-            ),
-            buildProfileItem(
-              label: 'Password',
-              value: userData?['password'] ?? 'No password available',
-              // Check if password exists
-              icon: Icons.lock,
-            ),
-            Spacer(),
-            buildLogoutButton(context),
-          ],
+              SizedBox(height: height * 0.03), // Spacing
+
+              // Email and Password Display
+              buildProfileItem(
+                label: 'Your Email',
+                value: userData?['email'] ?? 'No email available',
+                icon: Icons.email,
+                width: width,
+              ),
+              buildProfileItem(
+                label: 'Password',
+                value: userData?['password'] ?? 'No password available',
+                icon: Icons.lock,
+                width: width,
+              ),
+              SizedBox(height: height * 0.04), // Spacing
+
+              // Logout Button
+              buildLogoutButton(context, width),
+            ],
+          ),
         ),
       ),
     );
   }
 
-// Widget to display profile information
+  // Widget to display profile information
   Widget buildProfileItem(
-      {required String label, required String value, required IconData icon}) {
+      {required String label, required String value, required IconData icon, required double width}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
             style: TextStyle(
-              fontSize: 16,
-              color: Colors.deepPurple[300], // Lighter text for labels
+              fontSize: width * 0.04, // Responsive font size for label
+              color: Colors.purple[300], // Light pastel purple for label
             ),
           ),
           SizedBox(height: 8),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.deepPurple[50],
-              // Very light purple background
-              borderRadius: BorderRadius.circular(15),
-              // Rounded corners to match the theme
+              color: Colors.purple[50], // Very light purple background
+              borderRadius: BorderRadius.circular(15), // Rounded corners
               boxShadow: [
                 BoxShadow(
-                  color: Colors.deepPurple.withOpacity(0.1),
-                  // Subtle shadow effect
+                  color: Colors.purple.withOpacity(0.1), // Subtle shadow effect
                   spreadRadius: 2,
                   blurRadius: 5,
                   offset: Offset(0, 3),
@@ -135,14 +143,15 @@ class _ParentProfileState extends State<ParentProfile> {
             ),
             child: Row(
               children: [
-                Icon(icon, color: Colors.deepPurple[400]),
-                // Icon color to match the theme
+                Icon(icon, color: Colors.purple[400]), // Icon color to match theme
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     value,
-                    style: TextStyle(fontSize: 16,
-                        color: Colors.deepPurple[600]), // Text color
+                    style: TextStyle(
+                      fontSize: width * 0.045, // Responsive font size for value
+                      color: Colors.purple[600], // Text color
+                    ),
                   ),
                 ),
               ],
@@ -153,38 +162,36 @@ class _ParentProfileState extends State<ParentProfile> {
     );
   }
 
-// Logout button widget
-  Widget buildLogoutButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () async {
-            try {
-              await _auth.signOut(); // Logs out the user
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) =>
-                    LoginScreen()), // Navigate to LoginScreen
-              );
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error logging out: $e')),
-              );
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple[400], // Purple color for button
-            padding: EdgeInsets.symmetric(vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                  15), // Rounded corners to match UI
-            ),
+  // Logout button widget
+  Widget buildLogoutButton(BuildContext context, double width) {
+    return SizedBox(
+      width: width * 0.9, // Responsive button width
+      child: ElevatedButton(
+        onPressed: () async {
+          try {
+            await _auth.signOut(); // Logs out the user
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()), // Navigate to LoginScreen
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error logging out: $e')),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.purple[400], // Pastel purple color for button
+          padding: EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15), // Rounded corners
           ),
-          child: Text(
-            'Logout',
-            style: TextStyle(fontSize: 18, color: Colors.white),
+        ),
+        child: Text(
+          'Logout',
+          style: TextStyle(
+            fontSize: width * 0.05, // Responsive font size for button text
+            color: Colors.white,
           ),
         ),
       ),

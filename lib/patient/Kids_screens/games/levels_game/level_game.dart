@@ -1,75 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-class LevelsPage extends StatelessWidget {
+import 'new_game/game_page1.dart';
+
+
+class SplashScreen_lvl extends StatefulWidget {
+  @override
+  _SplashScreen_lvlState createState() => _SplashScreen_lvlState();
+}
+
+class _SplashScreen_lvlState extends State<SplashScreen_lvl> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size; // Get the screen size for responsiveness
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose a Level'),
-        centerTitle: true, // Center title in AppBar
-        backgroundColor: Colors.deepPurpleAccent, // Custom AppBar color
-        elevation: 5.0, // AppBar shadow
+        backgroundColor: Colors.transparent, // Make the app bar background transparent
+        elevation: 0, // Remove shadow below the app bar
+        leading: BackButton(
+          color: Colors.black, // Set back button color to black
+        ),
       ),
       body: Stack(
         children: [
-          // Gradient Background
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purpleAccent, Colors.deepPurple],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
+          // Background GIF
+          Positioned.fill(
+            child: Image.asset(
+              'assets/games/butterfly.gif',
+              fit: BoxFit.cover,
             ),
           ),
+
+          // Foreground UI Elements
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Level 1 Button
-                _buildLevelButton(context, 'Level 1', size),
-                SizedBox(height: 30), // Space between buttons
-                // Level 2 Button
-                _buildLevelButton(context, 'Level 2', size),
-                SizedBox(height: 30), // Space between buttons
-                // Level 3 Button
-                _buildLevelButton(context, 'Level 3', size),
-                SizedBox(height: 30), // Space between buttons
-                // Level 4 Button
-                _buildLevelButton(context, 'Level 4', size),
-              ],
+            child: Container(
+              padding: EdgeInsets.all(10.0),
+              margin: EdgeInsets.symmetric(horizontal: 24.0),
+              decoration: BoxDecoration(
+                color: Color(0xFFD3E4CD).withOpacity(0.8), // Semi-transparent background for text readability
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8.0,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Guess the Shape',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Test your shape recognition skills! '
+                        'You will be shown different shapes, and you must correctly identify them. '
+                        'Challenge yourself and see how many shapes you can guess correctly!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MonsterMathGame()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white, // Button background color
+                      padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Adjust the padding for size
+                      textStyle: TextStyle(
+                        fontSize: 18, // Adjust font size as needed
+                      ),
+                    ),
+                    child: Text(
+                      'Start',
+                      style: TextStyle(color: Color(0xFF5B6D5B)),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
     );
   }
-
-  // Function to build a round button for each level
-  Widget _buildLevelButton(BuildContext context, String level, Size size) {
-    return ElevatedButton(
-      onPressed: () {
-        // Add your onPressed functionality here (like navigating to another page)
-        print('$level pressed');
-      },
-      style: ElevatedButton.styleFrom(
-        shape: CircleBorder(), // Make the button round
-        padding: EdgeInsets.all(size.width * 0.1), // Dynamic size based on screen width
-        backgroundColor: Colors.white, // Button background color
-        elevation: 10, // Shadow for a 3D effect
-        shadowColor: Colors.black38, // Shadow color
-      ),
-      child: Text(
-        level,
-        style: TextStyle(
-          fontSize: size.width * 0.05, // Dynamic font size based on screen width
-          fontWeight: FontWeight.bold,
-          color: Colors.deepPurpleAccent, // Text color
-        ),
-      ),
-    );
-  }
 }
-

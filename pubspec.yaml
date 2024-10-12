@@ -81,6 +81,8 @@ flutter:
   assets:
   #- assets/logo.png
     - assets/
+    - assets/images/Alena_Sofina_happy.gif
+    - assets/images/Alena_Sofina_sad.gif
     - assets/kids/avatars/
     - assets/splash_screen.gif
     - assets/age_set.gif
@@ -91,6 +93,21 @@ flutter:
     - assets/kids/Progress_icon.png
     - assets/kids/shapes_icon.png
     - assets/books/legs_count_book.pdf
+    - assets/images/level_3_background.gif
+    - assets/games/shapes_background.gif
+    - assets/images/level_2_background.gif
+    - assets/books/legs_count_book.pdf
+    - assets/images/rb_ball.png
+    - assets/images/flower_rb.png
+    - assets/images/elephant_rb.png
+    - assets/images/cat_rb.png
+    - assets/images/rb_star.png
+    - assets/games/butterfly.gif
+    - assets/games/grow_icon_1.png
+    - assets/games/grow_icon_2.png
+    - assets/games/grow_icon_3.png
+    - assets/games/grow_icon_4.png
+    - assets/games/grow_icon_5.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
